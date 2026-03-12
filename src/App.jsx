@@ -3,8 +3,10 @@ import './App.css'
 import Card from './Card'
 
 function App() {
+  const [guess, setGuess] = useState("")
+  const [feedback, setFeedback] = useState("")
   const [cardIndex, setCardIndex] = useState(0)
-  const card = [
+  const [card, setCard] = useState([
     { question: 'France', answer: 'Paris'},
     { question: 'Spain', answer: 'Madrid'},
     { question: 'Italy', answer: 'Rome'},
@@ -45,15 +47,35 @@ function App() {
     { question: 'Singapore', answer: 'Singapore'},
     { question: 'Russia', answer: 'Moscow'},
     { question: 'Saudi Arabia', answer: 'Riyadh'},
-  ]
+  ])
   return (
     <>
       <div className = "app">
         <h1>World Capital Flashcards!</h1>
         <h4 className = "description">Test your knowledge of world capitals! Click a card to reveal the capital, then hit 'Next Card' to get a new country.</h4>
         <h5 className = "cardCount">Total Cards: {card.length}</h5>
+
         <Card key = {cardIndex} question = {card[cardIndex].question} answer = {card[cardIndex].answer}/>
-        <button className = "nextButton" onClick= {() => setCardIndex(Math.floor(Math.random() * card.length))}>Next Card</button>
+
+        <div className="inputContainer">
+          <input className="guessInput" type="text" placeholder="Enter your guess here..." value={guess} onChange={(e) => setGuess(e.target.value)}/>
+
+          <button className="submitButton" onClick={() => {
+            if (guess.toLowerCase() === card[cardIndex].answer.toLowerCase()) {
+              setFeedback("correct")
+            } else {
+              setFeedback("incorrect")
+            }
+          }}>Submit</button>
+          {feedback === "correct" && <p>Correct!</p>}
+          {feedback === "incorrect" && <p>Incorrect. Try again!</p>}
+        </div>
+
+        <div className="navButtons">
+          <button className="backButton" disabled={cardIndex === 0} onClick={() => { setGuess(""); setFeedback(""); setCardIndex(cardIndex - 1)}}>⇦</button>
+          <button className="nextButton" disabled={cardIndex === card.length - 1} onClick={() => { setGuess(""); setFeedback(""); setCardIndex(cardIndex + 1)}}>⇨</button>
+        </div>
+        <button className="shuffleButton" onClick={() => { setCard([...card].sort(() => Math.random() - 0.5)); setCardIndex(0); setGuess(""); setFeedback("");}}>Shuffle</button>
       </div>
     </>
   )
